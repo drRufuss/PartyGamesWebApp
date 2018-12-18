@@ -1,9 +1,13 @@
-﻿
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
 @{
     ViewData["Title"] = "TestIndex";
     Layout = "";
 }
 
+<h2>@Localizer["Aplikacja"]</h2>
 <input id="loginTextBox" type="text" placeholder="Login"/>
 <input id="passwordTextBox" type="password" placeholder="Password" />
 <input id="signInButton" type="button" value="Sign In" />

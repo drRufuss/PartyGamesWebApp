@@ -11,6 +11,13 @@ namespace PartyGamesWebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IStringLocalizer<HomeController> _localizer;
+
+        public HomeController(IStringLocalizer<HomeController> localizer)
+        {
+            _localizer = localizer;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -21,7 +28,7 @@ namespace PartyGamesWebApp.Controllers
             return View();
         }
 
-        public IActionResult TestIndex()
+        public IActionResult TestIndex(IStringLocalizer<HomeController> localizer)
         {
             return View();
         }

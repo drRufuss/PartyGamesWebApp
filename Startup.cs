@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Microsoft.Extensions.Options;
 
 namespace PartyGamesWebApp
 {
@@ -34,15 +35,39 @@ namespace PartyGamesWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddLocalization(option =>
+            {
+                option.ResourcesPath = "Resources";
+            });
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddViewLocalization(
+                    Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix,
+                    option =>
+                    {
+                        option.ResourcesPath = "Resources";
+                    })
+                .AddDataAnnotationsLocalization();
 
             services.AddDbContext<DAL.DatabaseContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("PartyGamesDatabase")
                 )
             );
+
+            services.Configure<RequestLocalizationOptions>(option =>
+            {
+                var supportedCultures = new List<CultureInfo>
+                {
+                    new CultureInfo("pl-PL"),
+                    new CultureInfo("en-US")
+                };
+
+                option.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("pl-PL");
+                option.SupportedCultures = supportedCultures;
+                option.SupportedUICultures = supportedCultures;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +87,9 @@ namespace PartyGamesWebApp
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
 
             app.UseMvc(routes =>
             {
