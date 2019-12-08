@@ -28,9 +28,10 @@ namespace PartyGamesWebApp.Controllers
             return View();
         }
 
-        public IActionResult TestIndex(IStringLocalizer<HomeController> localizer)
+        public IActionResult TestIndex(/*IStringLocalizer<HomeController> localizer*/)
         {
-            return View();
+            ViewData["Title"] = _localizer["title"];
+            return View(new User());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
