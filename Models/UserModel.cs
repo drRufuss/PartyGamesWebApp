@@ -12,8 +12,10 @@ namespace PartyGamesWebApp.Models
     {
         public int UserID { get; set; }
         [Required]
-        //[MaxLength(100, )]
+        [MaxLength(50)]
         public string LoginName { get; set; }
+        [Required]
         public string Password { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }
