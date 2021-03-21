@@ -1,19 +1,17 @@
-﻿using System;
+﻿using System.Globalization;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using PartyGamesWebApp.Models;
+using PartyGamesWebApp.DAL;
 
 namespace PartyGamesWebApp
 {
@@ -51,7 +49,7 @@ namespace PartyGamesWebApp
                     })
                 .AddDataAnnotationsLocalization();
 
-            services.AddDbContext<DAL.DatabaseContext>(options =>
+            services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("PartyGamesDatabase")
                 )
@@ -65,9 +63,22 @@ namespace PartyGamesWebApp
                     new CultureInfo("en-US")
                 };
 
-                option.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("pl-PL");
+                option.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-US");
                 option.SupportedCultures = supportedCultures;
                 option.SupportedUICultures = supportedCultures;
+            });
+
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //}).AddCookie(options => { options.LoginPath = "/Login"; });
+
+            services.AddMvc().AddRazorPagesOptions(options =>
+            {
+                options.Conventions.AuthorizeFolder("/");
+                options.Conventions.AllowAnonymousToPage("/Index");
             });
         }
 
@@ -91,10 +102,13 @@ namespace PartyGamesWebApp
 
             var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(options.Value);
+            app.UseRouting();
+            app.UseAuthentication();
 
             app.UseEndpoints(routes =>
             {
-                routes.MapControllerRoute("default", "{controller=Home}/{action=TestIndex}/{id?}");
+                routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRazorPages();
             });
         }
     }

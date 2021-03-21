@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace PartyGamesWebApp
 {
-    public class Program
+    public class Program 
     {
         public static void Main(string[] args)
         {

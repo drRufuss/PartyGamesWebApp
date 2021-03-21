@@ -15,7 +15,6 @@ namespace PartyGamesWebApp.DAL
         {
             modelBuilder.Entity<User>()
                 .HasIndex(x => x.LoginName);
-            modelBuilder.Entity<User>().ToTable("User");
         }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
